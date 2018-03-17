@@ -1,0 +1,171 @@
+<!DOCTYPE html><!-- made by fzoccara.com with love and passion -->
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+                
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="author" content="Francesco Zoccarato" />
+
+        <title>fzoccara - Module Configurations</title>
+
+    	<style>
+    		/*90AFC5 336B87 2A3132 763626 EAF1F7*/
+    		* {box-sizing: border-box;}
+    		.hidden{display:none;}
+			body{margin:0;padding:100px 0 0;background: #EAF1F7; font-family:arial; text-align:center;color:#2A3132; }
+			h1 img{max-height:100px; vertical-align: middle;}
+			a{color:#763626;}
+			a.show-wifi-configuration,a.show-advanced-mode{font-size:0.7em; display: block;margin-bottom:10px;}
+			ul{list-style-position: inside;display: block;}
+			ul li{}
+			h1{color:#2A3132;}
+			h2{padding:5px;}
+			.messages{position:absolute;top:0;width:100%;}
+			.message{width:100%;background:#ccc;text-align:center;color:#fff; line-height:2;}
+			fieldset{text-align: left; border:none; max-width: 600px;margin:0 auto; }
+			legend{text-align:center;color:#2A3132;font-weight: bold;}
+			#formChecker{margin-bottom:50px;}
+			label{margin-top: 12px; padding-left:5px;vertical-align: middle;height:30px;display: inline-block;}
+			label.radio{margin-top:0;}
+			input{width:100%; height:30px; padding:5px; margin:5px; border:1px solid #336B87; color:#2A3132; background: #EAF1F7; display: block;}
+			button,input[type=button]{ display:block;background: #763626; cursor:pointer; color:#EAF1F7; font-size:1em;}
+			button.secondary,input.secondary{background:#EAF1F7 ; color: #763626;}
+			input.disabled {cursor:default;}
+			input[type=checkbox]{width:auto;display: inline; }
+			input[type=radio]{width:auto;display: inline; }
+			.color-container svg{ margin:0 auto; }
+			.range-container{text-align: center;}
+			.range {
+			  background: #cfd8d6;
+			  box-sizing: border-box;
+			  display: inline-flex;
+			  height: 20px;
+			  margin: 1px 0;
+			  width: 320px;
+			}
+
+			.range:hover {
+			  cursor: pointer;
+			}
+
+			.range-fill {
+			  background: #1bbe8e;
+			  box-sizing: border-box;
+			  display: inline-flex;
+			  width: 0;
+			}
+
+			.range-handle {
+			  align-self: center;
+			  border: 3px solid #1bbe8e;
+			  box-sizing: border-box;
+			  cursor: pointer;
+			  display: inline-flex;
+			  flex-grow: 0;
+			  flex-shrink: 0;
+			  height: 30px;
+			  width: 0;
+			}
+
+			.range-container .range-fill{
+			  background: #1bbe8e;
+			}
+			.range-container .range-handle  {
+			  border: 3px solid #1bbe8e;
+			}
+    	</style>
+        <script type="text/javascript">
+        	var connection = null;
+			var debug = true;
+			var separatorChar = "|";
+		    var formNotify,statusNotify;
+
+			var sendAllCONF = function( conf ){
+
+			    formNotify = document.getElementById("formChecker");
+
+		        var configurations =  'test';
+
+		        if(debug){console.log( 'conf: ' + configurations ); }
+		        
+		        try{
+		            connection.send(configurations );
+		            formNotify.style.background = 'green';
+		            formNotify.innerHTML =  "Single configuration sent!" ;
+		            if(debug){console.log("Single configuration sent!" );}
+		        }catch(err){
+		            formNotify.style.background = 'orange';
+		            formNotify.innerHTML =  "Single configuration not sent!" ;
+		            if(debug){console.log(err);}
+		        }
+			}
+
+			var implode = function( array, separator ){
+				return Object.keys(array).map(function(x){return array[x];}).join(separator)
+			}
+
+			var initialize = function(){
+
+			    statusNotify = document.getElementById("statusChecker");
+
+			    try{
+			        //connection = new WebSocket('ws://'+location.hostname+':81/', ['arduino']);
+			        //connection = new WebSocket('ws://172.17.0.2:8080', ['arduino']);
+			        //connection = new WebSocket('ws://192.168.4.1:81/', ['arduino']);
+			        connection = new WebSocket('wss://fzoccara.herokuapp.com/', ['arduino']);
+
+			        connection.onopen = function () {  
+			            connection.send('Connect ' + new Date()); 
+			            if(debug){console.log('WebSocket open connection ');}
+
+			            connection.send("?");
+			        }; 
+			        connection.onerror = function (error) { 
+			            if(debug){console.log('WebSocket Error ', error);}
+			        };
+			        connection.onmessage = function (e) {  
+			        	if(typeof e.data != "undefined"){
+			        		
+				            if(debug){console.log('Server: ', e.data);}
+				            statusNotify.style.background = 'green';
+				            statusNotify.innerHTML =  "WebSocket Connected!" ;
+				            if(debug){console.log("WebSocket Connected!" );}
+			        	}
+			        };
+			        connection.onclose = function(e) {
+			            if(debug){console.log('Server: ', e.data);}
+			            statusNotify.style.background = 'red';
+			            statusNotify.innerHTML =  "WebSocket Disconnected!" ;
+			            if(debug){console.log("WebSocket Disconnected!" );}
+			        };
+			    }catch(err){
+			        statusNotify.style.background = 'red';
+			        statusNotify.innerHTML =  "WebSocket Disconnected!" ;
+			        if(debug){console.log("WebSocket Disconnected!" );}
+			        if(debug){console.log(err);}
+			    }
+			}
+        </script>
+	</head>
+	<body>
+		<div class="messages">
+			<div class="message" id="statusChecker">Initializing...</div>
+			<div class="message" id="formChecker"></div>
+		</div>
+
+        <div id="header">
+        	<h1>fzoccara - WS test</h1>
+        </div>
+		<form id="form">
+			
+			<fieldset>
+				<input name="submit" type="button" id="submit" value="SEND TEST" class="disabled" onclick="sendAllCONF();return false;" />
+			</fieldset>
+		</form>
+		<script type="text/javascript">
+			initialize();
+		</script>
+	</body>
+</html>

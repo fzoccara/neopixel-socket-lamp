@@ -1,0 +1,33 @@
+/*90AFC5 336B87 2A3132 763626 EAF1F7*/
+* {box-sizing: border-box;}
+.hidden{display:none;}
+body{margin:0;padding:100px 0 0;background: #EAF1F7; font-family:arial; text-align:center;color:#2A3132; }
+h1 img{max-height:100px; vertical-align: middle;}
+a{color:#763626;}
+a.show-wifi-configuration,a.show-advanced-mode{font-size:0.7em; display: block;margin-bottom:10px;}
+ul{list-style-position: inside;display: block;}
+ul li{}
+h1{color:#2A3132;}
+h2{padding:5px;}
+.messages{position:absolute;top:0;width:100%;}
+.message{width:100%;background:#ccc;text-align:center;color:#fff; line-height:2;}
+fieldset{text-align: left; border:none; max-width: 600px;margin:0 auto; }
+legend{text-align:center;color:#2A3132;font-weight: bold;}
+#formChecker{margin-bottom:50px;}
+label{margin-top: 12px; padding-left:5px;vertical-align: middle;height:30px;display: inline-block;}
+label.radio{margin-top:0;}
+label[for=ssl]{margin-top:0;}
+input{width:100%; height:30px; padding:5px; margin:5px; border:1px solid #336B87; color:#2A3132; background: #EAF1F7; display: block;}
+button,input[type=button]{ display:block;background: #763626; cursor:pointer; color:#EAF1F7; font-size:1em;}
+button.secondary,input.secondary{background:#EAF1F7 ; color: #763626;}
+input.disabled {cursor:default;}
+input[type=checkbox]{width:auto;display: inline; }
+input[type=radio]{width:auto;display: inline; }
+.color-container svg{ margin:0 auto; }
+.range-container{text-align: center;}
+.range {background: #cfd8d6;box-sizing: border-box;display: inline-flex;height: 20px;margin: 1px 0;width: 320px;}
+.range:hover {cursor: pointer;}
+.range-fill {background: #1bbe8e;box-sizing: border-box;display: inline-flex;width: 0;}
+.range-handle {align-self: center;border: 3px solid #1bbe8e;box-sizing: border-box;cursor: pointer;display: inline-flex;flex-grow: 0;flex-shrink: 0;height: 30px;width: 0;}
+.range-container .range-fill{background: #1bbe8e;}
+.range-container .range-handle  {border: 3px solid #1bbe8e;}

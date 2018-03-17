@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<!-- made by fzoccara.com with love and passion -->
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="author" content="Francesco Zoccarato" />
+
+        <title>fzoccara - Module Configurations</title>
+
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<div class="messages">
+			<div class="message" id="statusChecker">Initializing...</div>
+			<div class="message" id="formChecker"></div>
+		</div>
+
+        <div id="header">
+        	<h1>fzoccara - Module Configurations</h1>
+        </div>
+		<form id="form">
+			<fieldset id="wifi-configuration" data-show-label="Show wifi configurations" data-hide-label="Hide wifi configurations" >
+				<legend>Wifi Configuration</legend>
+				<p>Saving will reboot</p>
+				<label for="ssid">Ssid</label><br/>
+				<input name="ssid" id="ssid" type="text" value="" placeholder="SSID Name" />
+				<label for="password">Password</label><br/>
+				<input name="password" id="password" type="password" value="" placeholder="Password"/>
+				<div style="display:none">
+					<label for="staticip">Static IP</label><br/>
+					<input name="staticip" id="staticip" type="text" value="" placeholder="Static IP" />
+				</div>
+			</fieldset>
+
+			<fieldset id="service-configuration" data-show-label="Show service configurations" data-hide-label="Hide service configurations" >
+				<legend>Service Configuration</legend>
+				<label for="port">Port</label><br/>
+				<input name="port" id="port" type="text" value="" placeholder="Port" />
+				<label for="host">Host</label><br/>
+				<input name="host" id="host" type="text" value="" placeholder="Host" />
+				<label for="path">Path</label><br/>
+				<input name="path" id="path" type="text" value="" placeholder="Path" />
+				<input name="ssl" id="ssl" type="checkbox" value="1" placeholder="SSL" onclick="onSslToggle(this);return;" /> <label for="ssl">Enable HTTPS </label><br/>
+				<div id="ssl-configuration">
+					<label for="fingerprint">SSL Fingerprint</label><br/>
+					<input name="fingerprint" id="fingerprint" type="text" value="" placeholder="SSL Fingerprint"/>
+				</div>
+			</fieldset>
+
+			<a class="show-advanced-mode" href="#" onclick="toggleVisibility(this,'advanced-mode');return false;">Show advanced configurations</a>
+			<fieldset id="advanced-mode" style="display:none;" data-show-label="Show advanced configurations" data-hide-label="Hide advanced configurations" >
+				<legend>Advanced Access Point Configuration</legend>
+				<label for="ssidap">Access Point Ssid Name</label><br/>
+				<input name="ssidap" id="ssidap" type="text" value="" placeholder="Access Point Ssid Name" />
+				<label for="passwordap">Access Point Password</label><br/>
+				<input name="passwordap" id="passwordap" type="password" value="" placeholder="Access Point Password"/>
+				<input name="reset" type="button" id="reset" value="RESET LAMP" class="secondary disabled" onclick="resetLamp();return false;"  />
+			</fieldset>
+			<fieldset>
+				<input name="submit" type="button" id="submit" value="SUBMIT ALL" class="disabled" onclick="sendAllCONF();return false;" />
+				<input name="restart" type="button" id="restart" value="RESTART LAMP" class="secondary disabled" onclick="restartLamp();return false;" />
+			</fieldset>
+		</form>
+	</body>
+	<script type="text/javascript" async="" src="scripts.js"></script>
+</html>
