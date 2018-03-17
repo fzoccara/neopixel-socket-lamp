@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+	<!-- made by fzoccara.com with love and passion -->
+	<head>
+
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="author" content="Francesco Zoccarato" />
+
+        <title>fzoccara - Module Configurations</title>
+
+		<link rel="stylesheet" href="style.css"  >
+	</head>
+	<body>
+		<div class="messages">
+			<div class="message" id="statusChecker">Initializing...</div>
+			<div class="message" id="formChecker"></div>
+		</div>
+
+        <div id="header">
+        	<h1>fzoccara - Module Configurations</h1>
+        </div>
+		<form id="form">
+
+			<fieldset>
+				<legend>Lamp Configuration</legend>
+				<label>Lamp Mode</label>
+				<div class="radio">
+				  <input type="radio" name="lamp" id="lamp6" value="6" onclick="sendSingleCONF('LAMP',this.value);" >
+				  <label class="radio" for="lamp6" >STATIC COLOR</label>
+				</div>
+				<div class="radio">
+				  <input type="radio" name="lamp" id="lamp1" value="1" onclick="sendSingleCONF('LAMP',this.value);" >
+				  <label class="radio" for="lamp1" >RAINBOW CYCLE</label>
+				</div>
+				<div class="radio">
+				  <input type="radio" name="lamp" id="lamp2" value="2" onclick="sendSingleCONF('LAMP',this.value);" >
+				  <label class="radio" for="lamp2" >THEATER CHASE</label>
+				</div>
+				<div class="radio">
+				  <input type="radio" name="lamp" id="lamp3" value="3" onclick="sendSingleCONF('LAMP',this.value);" >
+				  <label class="radio" for="lamp3" >COLOR WIPE</label>
+				</div>
+				<div class="radio">
+				  <input type="radio" name="lamp" id="lamp4" value="4" onclick="sendSingleCONF('LAMP',this.value);" >
+				  <label class="radio" for="lamp4" >SCANNER</label>
+				</div>
+				<div class="radio">
+				  <input type="radio" name="lamp" id="lamp5" value="5" onclick="sendSingleCONF('LAMP',this.value);" >
+				  <label class="radio" for="lamp5" >FADE</label>
+				</div>
+				<div id="interval-container">
+					<label for="interval">Speed</label><br/>
+					<div class="range-container">
+						<input type="range" id="interval" type="text" placeholder="Speed" min="0" max="5000" step="100">
+						<output id="interval_output" class="hidden"></output>
+						<br/>
+					</div>
+				</div>
+				<div id="main-color-container">
+					<label for="color_r">Main color</label><br/>
+					<div class="color-container">
+						<div id="main-color"></div>
+					</div>
+					<input name="color_r" id="color_r" type="hidden" value="" placeholder="Main color RED" onfocusout="sendSingleCONF('COLOR_R',this.value)"/>
+					<input name="color_g" id="color_g" type="hidden" value="" placeholder="Main color GREEN" onfocusout="sendSingleCONF('COLOR_G',this.value)"/>
+					<input name="color_b" id="color_b" type="hidden" value="" placeholder="Main color BLUE" onfocusout="sendSingleCONF('COLOR_B',this.value)"/>
+				</div>
+
+				<div id="secondary-color-container">
+					<label for="color_r">Secondary color</label><br/>
+					<div class="color-container">
+						<div id="secondary-color"></div>
+					</div>
+					<input name="color_alt_r" id="color_alt_r" type="hidden" value="" placeholder="Secondary color RED" onfocusout="sendSingleCONF('COLOR_ALT_R',this.value)"/>
+					<input name="color_alt_g" id="color_alt_g" type="hidden" value="" placeholder="Secondary color GREEN" onfocusout="sendSingleCONF('COLOR_ALT_G',this.value)"/>
+					<input name="color_alt_b" id="color_alt_b" type="hidden" value="" placeholder="Secondary color BLUE" onfocusout="sendSingleCONF('COLOR_ALT_B',this.value)"/>
+				</div>
+				<div id="steps-container">
+					<label for="steps">Steps</label><br/>
+					<div class="range-container">
+						<input type="range" id="steps" type="text" placeholder="Steps" min="10" max="1000" step="10">
+						<output id="steps_output" class="hidden"></output>
+						<br/>
+					</div>
+				</div>
+				<br/>
+			</fieldset>
+			<a class="show-wifi-configuration" href="#" onclick="toggleVisibility(this,'wifi-configuration');return false;">Show wifi configurations</a>
+			<fieldset id="wifi-configuration" style="display:none;" data-show-label="Show wifi configurations" data-hide-label="Hide wifi configurations" >
+				<legend>Wifi Configuration</legend>
+				<p>Saving will reboot</p>
+				<label for="ssid">Ssid</label><br/>
+				<input name="ssid" id="ssid" type="text" value="" placeholder="SSID Name" />
+				<label for="password">Password</label><br/>
+				<input name="password" id="password" type="password" value="" placeholder="Password"/>
+				<div style="display:none">
+					<label for="staticip">Static IP</label><br/>
+					<input name="staticip" id="staticip" type="text" value="" placeholder="Static IP" />
+				</div>
+			</fieldset>
+
+			<a class="show-wifi-configuration" href="#" onclick="toggleVisibility(this,'service-configuration');return false;">Show service configurations</a>
+			<fieldset id="service-configuration" style="display:none;" data-show-label="Show service configurations" data-hide-label="Hide service configurations" >
+				<legend>Service Configuration</legend>
+				<label for="port">Port</label><br/>
+				<input name="port" id="port" type="text" value="" placeholder="Port" />
+				<label for="host">Host</label><br/>
+				<input name="host" id="host" type="text" value="" placeholder="Host" />
+				<label for="path">Path</label><br/>
+				<input name="path" id="path" type="text" value="" placeholder="Path" />
+				<input name="ssl" id="ssl" type="checkbox" value="1" placeholder="SSL" onclick="onSslToggle(this);return;" /> <label for="ssl">Enable HTTPS </label><br/>
+				<div id="ssl-configuration">
+					<label for="fingerprint">SSL Fingerprint</label><br/>
+					<input name="fingerprint" id="fingerprint" type="text" value="" placeholder="SSL Fingerprint"/>
+				</div>
+			</fieldset>
+
+			<a class="show-advanced-mode" href="#" onclick="toggleVisibility(this,'advanced-mode');return false;">Show advanced configurations</a>
+			<fieldset id="advanced-mode" style="display:none;" data-show-label="Show advanced configurations" data-hide-label="Hide advanced configurations" >
+				<legend>Advanced Access Point Configuration</legend>
+				<label for="ssidap">Access Point Ssid Name</label><br/>
+				<input name="ssidap" id="ssidap" type="text" value="" placeholder="Access Point Ssid Name" />
+				<label for="passwordap">Access Point Password</label><br/>
+				<input name="passwordap" id="passwordap" type="password" value="" placeholder="Access Point Password"/>
+				<input name="reset" type="button" id="reset" value="RESET LAMP" class="secondary disabled" onclick="resetLamp();return false;"  />
+			</fieldset>
+			<fieldset>
+				<input name="submit" type="button" id="submit" value="SUBMIT ALL" class="disabled" onclick="sendAllCONF();return false;" />
+				<input name="restart" type="button" id="restart" value="RESTART LAMP" class="secondary disabled" onclick="restartLamp();return false;" />
+			</fieldset>
+		</form>
+		<script type="text/javascript" src="iro.min.js"></script>
+		<script type="text/javascript" src="range.js"></script>
+		<script type="text/javascript" src="scripts.js"></script>
+	</body>
+</html>
