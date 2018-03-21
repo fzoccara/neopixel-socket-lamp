@@ -12,7 +12,9 @@
 
         <title>fzoccara - Module Configurations</title>
 
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 		<link rel="stylesheet" href="style.css"  >
+		
 	</head>
 	<body>
 		<div class="messages">
@@ -37,13 +39,17 @@
 				  <label class="radio" for="lamp1" >RAINBOW CYCLE</label>
 				</div>
 				<div class="radio">
-				  <input type="radio" name="lamp" id="lamp2" value="2" onclick="sendSingleCONF('LAMP',this.value);" >
-				  <label class="radio" for="lamp2" >THEATER CHASE</label>
+				  <input type="radio" name="lamp" id="lamp7" value="7" onclick="sendSingleCONF('LAMP',this.value);" >
+				  <label class="radio" for="lamp7" >COLOR ROTATION</label>
 				</div>
 				<div class="radio">
-				  <input type="radio" name="lamp" id="lamp3" value="3" onclick="sendSingleCONF('LAMP',this.value);" >
-				  <label class="radio" for="lamp3" >COLOR WIPE</label>
+				  <input type="radio" name="lamp" id="lamp2" value="2" onclick="sendSingleCONF('LAMP',this.value);" >
+				  <label class="radio" for="lamp2" >DOUBLE FASE</label>
 				</div>
+				<!-- <div class="radio">
+				  <input type="radio" name="lamp" id="lamp3" value="3" onclick="sendSingleCONF('LAMP',this.value);" >
+				  <label class="radio" for="lamp3" >COLOR FULLFILL</label>
+				</div> -->
 				<div class="radio">
 				  <input type="radio" name="lamp" id="lamp4" value="4" onclick="sendSingleCONF('LAMP',this.value);" >
 				  <label class="radio" for="lamp4" >SCANNER</label>
@@ -57,6 +63,14 @@
 					<div class="range-container">
 						<input type="range" id="interval" type="text" placeholder="Speed" min="0" max="5000" step="100">
 						<output id="interval_output" class="hidden"></output>
+						<br/>
+					</div>
+				</div>
+				<div id="steps-container">
+					<label for="steps">Steps</label><br/>
+					<div class="range-container">
+						<input type="range" id="steps" type="text" placeholder="Steps" min="10" max="1000" step="10">
+						<output id="steps_output" class="hidden"></output>
 						<br/>
 					</div>
 				</div>
@@ -78,14 +92,6 @@
 					<input name="color_alt_r" id="color_alt_r" type="hidden" value="" placeholder="Secondary color RED" onfocusout="sendSingleCONF('COLOR_ALT_R',this.value)"/>
 					<input name="color_alt_g" id="color_alt_g" type="hidden" value="" placeholder="Secondary color GREEN" onfocusout="sendSingleCONF('COLOR_ALT_G',this.value)"/>
 					<input name="color_alt_b" id="color_alt_b" type="hidden" value="" placeholder="Secondary color BLUE" onfocusout="sendSingleCONF('COLOR_ALT_B',this.value)"/>
-				</div>
-				<div id="steps-container">
-					<label for="steps">Steps</label><br/>
-					<div class="range-container">
-						<input type="range" id="steps" type="text" placeholder="Steps" min="10" max="1000" step="10">
-						<output id="steps_output" class="hidden"></output>
-						<br/>
-					</div>
 				</div>
 				<br/>
 			</fieldset>
@@ -133,6 +139,10 @@
 				<input name="restart" type="button" id="restart" value="RESTART LAMP" class="secondary disabled" onclick="restartLamp();return false;" />
 			</fieldset>
 		</form>
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
 		<script type="text/javascript" src="iro.min.js"></script>
 		<script type="text/javascript" src="range.js"></script>
 		<script type="text/javascript" src="scripts.js"></script>

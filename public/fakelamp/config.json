@@ -1,0 +1,23 @@
+{
+  "device": "lamp",
+  "name": "fakelamp",
+  "SSID":"",
+  "PASSWORD":"",
+  "STATIC_IP":"",
+  "SSIDAP":"fzoccara-lamp",
+  "PASSWORDAP":"12345678",
+  "SSL":true,
+  "HOST":"fzoccara-lamps.azurewebsites.net",
+  "PORT":"443",
+  "PATH":"/",
+  "FINGERPRINT":"08 3B 71 72 02 43 6E CA ED 42 86 93 BA 7E DF 81 C4 BC 62 30",
+  "LAMP":"1",
+  "COLOR_R":"0",
+  "COLOR_G":"8",
+  "COLOR_B":"255",
+  "COLOR_ALT_R":"252",
+  "COLOR_ALT_G":"168",
+  "COLOR_ALT_B":"0",
+  "INTERVAL":"100",
+  "STEPS":"50"
+}

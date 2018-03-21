@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "/Users/fzoccara/Library/Arduino15/packages/esp8266/hardware/esp8266/2.3.0/cores/esp8266",
+                "/Applications/Arduino.app/Contents/Java/libraries",
+                "/Users/fzoccara/Documents/Arduino/libraries"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": false,
+                "path": [
+                    "/Users/fzoccara/Library/Arduino15/packages/esp8266/hardware/esp8266/2.3.0/cores/esp8266",
+                    "/Applications/Arduino.app/Contents/Java/libraries",
+                    "/Users/fzoccara/Documents/Arduino/libraries"
+                ]
+            },
+            "intelliSenseMode": "clang-x64",
+            "macFrameworkPath": [
+                "/System/Library/Frameworks",
+                "/Library/Frameworks"
+            ]
+        }
+    ],
+    "version": 3
+}

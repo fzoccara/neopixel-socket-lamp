@@ -49,6 +49,7 @@
 #define LAMP_SCANNER 4
 #define LAMP_FADE 5
 #define LAMP_STATIC 6
+#define LAMP_COLORROTATION 1
 
 int wifiStatus = WIFI_STATUS_NO_CONNECTION; // 0: no connect | 1: wifi ap | 2: wifi client
 
@@ -140,8 +141,6 @@ String getString(String data, char separator, int index) {
 /* SET RING FROM EEPROM CONFIGURATION */
 void setRing() {
 
-  Ring.clear();
-
   int lampMode = readFromEeprom(VARIABLE_LAMP).toInt();
   if (lampMode == 0) {
     lampMode = LAMP_RAINBOWCYCLE;
@@ -186,21 +185,27 @@ void setRing() {
       if (logging) {
         Serial.println("STATIC");
       }
+      Ring.clear();
       Ring.Static(Ring.Color(color_r, color_g, color_b));
       break;
-
     case LAMP_RAINBOWCYCLE:
       if (logging) {
         Serial.println("LAMP_RAINBOWCYCLE ");
       }
+      Ring.clear();
       Ring.RainbowCycle(lampInterval);
       break;
-
+    case LAMP_COLORROTATION:
+      if (logging) {
+        Serial.println("LAMP_COLORROTATION ");
+      }
+      Ring.clear();
+      Ring.ColorRotation(lampInterval);
+      break;
     case LAMP_THEATERCHASE:
       if (logging) {
         Serial.println("LAMP_THEATERCHASE ");
       }
-      //ColorSet(Color(red, green, blue));
       color_alt_r = readFromEeprom(VARIABLE_COLOR_ALT_R).toInt();
       if (color_alt_r == 0) {
         color_alt_r = 0;
@@ -213,6 +218,7 @@ void setRing() {
       if (color_alt_b == 0) {
         color_alt_b = 50;
       }
+      Ring.clear();
       Ring.TheaterChase(Ring.Color(color_r, color_g, color_b),
                         Ring.Color(color_alt_r, color_alt_g, color_alt_b), lampInterval);
       break;
@@ -221,6 +227,7 @@ void setRing() {
       if (logging) {
         Serial.println("LAMP_COLORWIPE ");
       }
+      Ring.clear();
       Ring.ColorWipe(Ring.Color(color_r, color_g, color_b), lampInterval);
       break;
 
@@ -228,6 +235,7 @@ void setRing() {
       if (logging) {
         Serial.println("LAMP_SCANNER ");
       }
+      Ring.clear();
       Ring.Scanner(Ring.Color(color_r, color_g, color_b), lampInterval);
       break;
 
@@ -239,7 +247,6 @@ void setRing() {
       if (lampSteps != 0) {
         lampSteps = 100;
       }
-      //ColorSet(Color(red, green, blue));
       color_alt_r = readFromEeprom(VARIABLE_COLOR_ALT_R).toInt();
       if (color_alt_r == 0) {
         color_alt_r = 0;
@@ -252,14 +259,21 @@ void setRing() {
       if (color_alt_b == 0) {
         color_alt_b = 50;
       }
+      Ring.clear();
       Ring.Fade(Ring.Color(color_r, color_g, color_b),
                 Ring.Color(color_alt_r, color_alt_g, color_alt_b), lampSteps, lampInterval);
+      break;
+    default:
+      if (logging) {
+        Serial.println("NO CONFIGURATION FOUND, police mode");
+      }
+      Ring.clear();
+      Ring.Fade(Ring.Color(255, 0, 0), Ring.Color(0,0,255), 2, 300);
       break;
   }
 
 }
 /* SET RING FROM EEPROM CONFIGURATION */
-
 
 void restartEsp() {
   if (logging) {
@@ -471,7 +485,7 @@ void webSocketEventClient(WStype_t type, uint8_t * payload, size_t lenght) {
           Serial.println(device);
         }
 
-        // send lamp configuration to client
+        // send lamp activation confirmation to server
         if (action ==  "connected") {
           if (logging) {
             Serial.println("connected");
@@ -489,7 +503,7 @@ void webSocketEventClient(WStype_t type, uint8_t * payload, size_t lenght) {
         }
 
 
-        // send lamp configuration to client
+        // send lamp configuration to server
         if (action ==  "read-all") {
           if (logging) {
             Serial.println("read all");
@@ -875,10 +889,11 @@ void setup()
       webSocketClient.begin(host, port.toInt(), path);
     }
 
+    //webSocketClient.begin("192.168.1.101", 80, "/");
     //webSocketClient.beginSSL("fzoccara.herokuapp.com", 443,
     //"/","08 3B 71 72 02 43 6E CA ED 42 86 93 BA 7E DF 81 C4 BC 62 30");
-
-    //webSocketClient.begin("192.168.1.101", 80, "/");
+    //webSocketClient.beginSSL("fzoccara-lamps.azurewebsites.net", 443,
+    //"/","3A B0 B1 C2 7F 74 6F D9 0C 34 F0 D6 A9 60 CF 73 A4 22 9D E8");
 
     webSocketClient.onEvent(webSocketEventClient);
   }
@@ -899,19 +914,9 @@ void setup()
   /* CONNECT WIFI OR CREATE ACCESS POINT */
 }
 
-//int count = 0;
 // Main loop
 void loop()
 {
-  
-/*
-  Serial.print(digitalRead(buttonGpioPin));
-  if (++count > 80) {
-    count = 0;
-    Serial.println("");
-  }
-  delay(200);*/
-
   /* PixelStrips */
   Ring.Update();
   /* PixelStrips */

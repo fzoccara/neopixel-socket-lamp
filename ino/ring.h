@@ -1,6 +1,6 @@
 
 // Pattern types supported:
-enum  pattern { NONE, STATIC, RAINBOW_CYCLE, THEATER_CHASE, COLOR_WIPE, SCANNER, FADE };
+enum  pattern { NONE, STATIC, RAINBOW_CYCLE, COLOR_ROTATION, THEATER_CHASE, COLOR_WIPE, SCANNER, FADE };
 // Patern directions supported:
 enum  direction { FORWARD, REVERSE };
 
@@ -42,6 +42,9 @@ class NeoPatterns : public Adafruit_NeoPixel
                     break;
                 case RAINBOW_CYCLE:
                     RainbowCycleUpdate();
+                    break;
+                case COLOR_ROTATION:
+                    ColorRotationUpdate();
                     break;
                 case THEATER_CHASE:
                     TheaterChaseUpdate();
@@ -119,7 +122,6 @@ class NeoPatterns : public Adafruit_NeoPixel
             setPixelColor(i, Color1);
         }
         show();
-        Increment();
     }
     
     // Initialize for a RainbowCycle
@@ -138,6 +140,27 @@ class NeoPatterns : public Adafruit_NeoPixel
         for(int i=0; i< numPixels(); i++)
         {
             setPixelColor(i, Wheel(((i * 256 / numPixels()) + Index) & 255));
+        }
+        show();
+        Increment();
+    }
+
+    // Initialize for Color Rotation
+    void ColorRotation(uint8_t interval, direction dir = FORWARD)
+    {
+        ActivePattern = COLOR_ROTATION;
+        Interval = interval;
+        TotalSteps = 255;
+        Index = 0;
+        Direction = dir;
+    }
+    
+    // Update the Color Rotation Pattern
+    void ColorRotationUpdate()
+    {
+        for(int i=0; i< numPixels(); i++)
+        {
+            setPixelColor(i, Wheel(((256 / numPixels()) + Index) & 255));
         }
         show();
         Increment();

@@ -4,9 +4,12 @@ var connection = null;
 var debug = true;
 var formNotify,statusNotify;
 var settings = {};
+var initialized = false;
+var mainColor = null;
+var secondaryColor = null;
 
 var initVariables = function(json){
-
+    
     settings.SSID = (typeof json.SSID != "undefined") ? json.SSID : "";
     settings.PASSWORD = (typeof json.PASSWORD != "undefined") ? json.PASSWORD: "";
     settings.MODE = (typeof json.MODE != "undefined") ? json.MODE: "";
@@ -54,9 +57,16 @@ var setFormFields = function(){
     document.getElementById("color_r").value = settings.COLOR_R;
     document.getElementById("color_g").value = settings.COLOR_G;
     document.getElementById("color_b").value = settings.COLOR_B;
+    if(mainColor){
+        mainColor.color.rgb = { r: settings.COLOR_R, g: settings.COLOR_G, b: settings.COLOR_B };
+    }
+
     document.getElementById("color_alt_r").value = settings.COLOR_ALT_R;
     document.getElementById("color_alt_g").value = settings.COLOR_ALT_G;
     document.getElementById("color_alt_b").value = settings.COLOR_ALT_B;
+    if(secondaryColor){
+        secondaryColor.color.rgb = { r: settings.COLOR_ALT_R, g: settings.COLOR_ALT_G, b: settings.COLOR_ALT_B };
+    }
 
     document.getElementById("interval").value = settings.INTERVAL;
     document.getElementById("steps").value = settings.STEPS;
@@ -119,7 +129,9 @@ var setLampModeDependencies = function(){
 
     var mainColorContainer = document.getElementById("main-color-container");
     var secondaryColorContainer = document.getElementById("secondary-color-container");
-    if(settings.LAMP == 1){
+    var intervalContainer = document.getElementById("interval-container");
+    // rainbow mode
+    if(settings.LAMP == 1 || settings.LAMP == 7){
         mainColorContainer.style.display = "none";
     }
     else{
@@ -138,60 +150,69 @@ var setLampModeDependencies = function(){
     else{
         stepsContainer.style.display = "none";
     }
+    if(settings.LAMP == 6 ){
+        intervalContainer.style.display = "none";
+    }
+    else{
+        intervalContainer.style.display = "block";
+    }
 
 }
 
 var initializeForm = function(){
+    if(!initialized)
+    {
+        initialized = true;
+        mainColor = new iro.ColorPicker("#main-color", {
+            width: 320,
+            height: 320,
+            color: {r: settings.COLOR_R, g: settings.COLOR_G, b: settings.COLOR_B},
+        });
+        secondaryColor = new iro.ColorPicker("#secondary-color", {
+            width: 320,
+            height: 320,
+            color: {r: settings.COLOR_ALT_R, g: settings.COLOR_ALT_G, b: settings.COLOR_ALT_B},
+        });
+        mainColor.on("input:end", function onInputStart() {
+            document.getElementById("color_r").value = mainColor.color.rgb.r;
+            sendSingleCONF("COLOR_R",mainColor.color.rgb.r);
+            document.getElementById("color_g").value = mainColor.color.rgb.g;
+            sendSingleCONF("COLOR_G",mainColor.color.rgb.g);
+            document.getElementById("color_b").value = mainColor.color.rgb.b;
+            sendSingleCONF("COLOR_B",mainColor.color.rgb.b);
+        });
+        secondaryColor.on("input:end", function onInputStart() {
+            document.getElementById("color_alt_r").value = secondaryColor.color.rgb.r;
+            sendSingleCONF("COLOR_ALT_R",secondaryColor.color.rgb.r);
+            document.getElementById("color_alt_g").value = secondaryColor.color.rgb.g;
+            sendSingleCONF("COLOR_ALT_G",secondaryColor.color.rgb.g);
+            document.getElementById("color_alt_b").value = secondaryColor.color.rgb.b;
+            sendSingleCONF("COLOR_ALT_B",secondaryColor.color.rgb.b);
+        });
 
-    var mainColor = new iro.ColorPicker("#main-color", {
-        width: 320,
-        height: 320,
-        color: {r: settings.COLOR_R, g: settings.COLOR_G, b: settings.COLOR_B},
-    });
-    var secondaryColor = new iro.ColorPicker("#secondary-color", {
-        width: 320,
-        height: 320,
-        color: {r: settings.COLOR_ALT_R, g: settings.COLOR_ALT_G, b: settings.COLOR_ALT_B},
-    });
-    mainColor.on("input:end", function onInputStart() {
-        document.getElementById("color_r").value = mainColor.color.rgb.r;
-        sendSingleCONF("COLOR_R",mainColor.color.rgb.r);
-        document.getElementById("color_g").value = mainColor.color.rgb.g;
-        sendSingleCONF("COLOR_G",mainColor.color.rgb.g);
-        document.getElementById("color_b").value = mainColor.color.rgb.b;
-        sendSingleCONF("COLOR_B",mainColor.color.rgb.b);
-    });
-    secondaryColor.on("input:end", function onInputStart() {
-        document.getElementById("color_alt_r").value = secondaryColor.color.rgb.r;
-        sendSingleCONF("COLOR_ALT_R",secondaryColor.color.rgb.r);
-        document.getElementById("color_alt_g").value = secondaryColor.color.rgb.g;
-        sendSingleCONF("COLOR_ALT_G",secondaryColor.color.rgb.g);
-        document.getElementById("color_alt_b").value = secondaryColor.color.rgb.b;
-        sendSingleCONF("COLOR_ALT_B",secondaryColor.color.rgb.b);
-    });
+        let inputIntervalElement = document.getElementById('interval');
+        let outputIntervalElement = document.getElementById('interval_output');
+        let intervalRange = new Range(inputIntervalElement, outputIntervalElement, () => {});
+        intervalRange.setValue(settings.INTERVAL);
+        intervalRange.onValueChange(() => {
+            document.getElementById("interval").value = intervalRange.getValue();
+            settings.INTERVAL = intervalRange.getValue();
+            sendSingleCONF("INTERVAL",intervalRange.getValue())
+        });
 
-    let inputIntervalElement = document.getElementById('interval');
-    let outputIntervalElement = document.getElementById('interval_output');
-    let intervalRange = new Range(inputIntervalElement, outputIntervalElement, () => {});
-    intervalRange.setValue(settings.INTERVAL);
-    intervalRange.onValueChange(() => {
-        document.getElementById("interval").value = intervalRange.getValue();
-        settings.INTERVAL = intervalRange.getValue();
-        sendSingleCONF("INTERVAL",intervalRange.getValue())
-    });
+        let inputStepsElement = document.getElementById('steps');
+        let outputStepsElement = document.getElementById('steps_output');
+        let stepsRange = new Range(inputStepsElement, outputStepsElement, () => {});
+        stepsRange.setValue(settings.STEPS);
+        stepsRange.onValueChange(() => {
+            document.getElementById("steps").value = stepsRange.getValue();
+            settings.STEPS = stepsRange.getValue();
+            sendSingleCONF("STEPS",stepsRange.getValue())
+        });
 
-    let inputStepsElement = document.getElementById('steps');
-    let outputStepsElement = document.getElementById('steps_output');
-    let stepsRange = new Range(inputStepsElement, outputStepsElement, () => {});
-    stepsRange.setValue(settings.STEPS);
-    stepsRange.onValueChange(() => {
-        document.getElementById("steps").value = stepsRange.getValue();
-        settings.STEPS = stepsRange.getValue();
-        sendSingleCONF("STEPS",stepsRange.getValue())
-    });
-
-    window.onresize = function(event) {
-    };
+        window.onresize = function(event) {
+        };
+    }
 
 }
 
@@ -326,6 +347,8 @@ var initialize = function(){
                 var json = JSON.parse(e.data);
                 console.log(json);
                 if(typeof json.device != "undefined" && json.device == "lamp"){
+                    var message = '';
+                    var responseJson = {};
                     if(typeof json.action != "undefined"){
                         if(json.action == "connected"){
                             if(debug){console.log('Server: ', e.data);}
@@ -334,9 +357,9 @@ var initialize = function(){
                             if(debug){console.log("Lamp Connected!" );}
 
                             if(debug){console.log('WebSocket open connection ');}
-                            var j2={"device":"control","action":"read-all"};
-                            var configurations2 =  JSON.stringify(j2);
-                            connection.send(configurations2);
+                            var responseJson={"device":"control","action":"read-all"};
+                            message =  JSON.stringify(responseJson);
+                            connection.send(message);
                         }
                         if(json.action == "read-all"){
                             initVariables(json);
