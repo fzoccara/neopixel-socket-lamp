@@ -49,7 +49,8 @@
 #define LAMP_SCANNER 4
 #define LAMP_FADE 5
 #define LAMP_STATIC 6
-#define LAMP_COLORROTATION 1
+#define LAMP_COLORROTATION 8
+#define LAMP_INFINITELOOP 9
 
 int wifiStatus = WIFI_STATUS_NO_CONNECTION; // 0: no connect | 1: wifi ap | 2: wifi client
 
@@ -65,7 +66,7 @@ String ssidAPDefault = "fzoccara-lamp";
 String passwordAPDefault = "12345678";
 const char* mdnsName = "fzoccara";
 
-int pixelCount = 24;
+int pixelCount = 12;
 #define pixelPin D2
 
 //ESP8266WiFiMulti WiFiMulti;
@@ -73,6 +74,8 @@ int pixelCount = 24;
 ESP8266WebServer server = ESP8266WebServer(80);
 WebSocketsServer webSocketServer = WebSocketsServer(81);
 WebSocketsClient webSocketClient;
+
+String lampName = (String(pixelCount) + "led-" + String(ESP.getChipId())).c_str();
 
 #include "ring.h";
 #include "eeprom.h";
@@ -187,6 +190,7 @@ void setRing() {
       }
       Ring.clear();
       Ring.Static(Ring.Color(color_r, color_g, color_b));
+      Ring.setBrightness(255);
       break;
     case LAMP_RAINBOWCYCLE:
       if (logging) {
@@ -194,6 +198,7 @@ void setRing() {
       }
       Ring.clear();
       Ring.RainbowCycle(lampInterval);
+      Ring.setBrightness(255);
       break;
     case LAMP_COLORROTATION:
       if (logging) {
@@ -201,6 +206,7 @@ void setRing() {
       }
       Ring.clear();
       Ring.ColorRotation(lampInterval);
+      Ring.setBrightness(255);
       break;
     case LAMP_THEATERCHASE:
       if (logging) {
@@ -221,6 +227,7 @@ void setRing() {
       Ring.clear();
       Ring.TheaterChase(Ring.Color(color_r, color_g, color_b),
                         Ring.Color(color_alt_r, color_alt_g, color_alt_b), lampInterval);
+      Ring.setBrightness(255);
       break;
 
     case LAMP_COLORWIPE:
@@ -229,6 +236,7 @@ void setRing() {
       }
       Ring.clear();
       Ring.ColorWipe(Ring.Color(color_r, color_g, color_b), lampInterval);
+      Ring.setBrightness(255);
       break;
 
     case LAMP_SCANNER:
@@ -237,6 +245,16 @@ void setRing() {
       }
       Ring.clear();
       Ring.Scanner(Ring.Color(color_r, color_g, color_b), lampInterval);
+      Ring.setBrightness(255);
+      break;
+
+    case LAMP_INFINITELOOP:
+      if (logging) {
+        Serial.println("LAMP_INFINITELOOP ");
+      }
+      Ring.clear();
+      Ring.InfiniteLoop(Ring.Color(color_r, color_g, color_b), lampInterval);
+      Ring.setBrightness(255);
       break;
 
     case LAMP_FADE:
@@ -262,6 +280,7 @@ void setRing() {
       Ring.clear();
       Ring.Fade(Ring.Color(color_r, color_g, color_b),
                 Ring.Color(color_alt_r, color_alt_g, color_alt_b), lampSteps, lampInterval);
+      Ring.setBrightness(255);
       break;
     default:
       if (logging) {
@@ -269,9 +288,9 @@ void setRing() {
       }
       Ring.clear();
       Ring.Fade(Ring.Color(255, 0, 0), Ring.Color(0,0,255), 2, 300);
+      Ring.setBrightness(255);
       break;
   }
-
 }
 /* SET RING FROM EEPROM CONFIGURATION */
 
@@ -355,6 +374,7 @@ void webSocketEventServer(uint8_t num, WStype_t type, uint8_t * payload, size_t 
           conf["device"] = "lamp";
           conf["action"] = "read-all";
 
+          conf["name"] = lampName;
           conf["SSID"] = readFromEeprom(VARIABLE_SSID);
           conf["PASSWORD"] = readFromEeprom(VARIABLE_PASSWORD);
           conf["STATIC_IP"] = readFromEeprom(VARIABLE_STATIC_IP);
@@ -514,6 +534,7 @@ void webSocketEventClient(WStype_t type, uint8_t * payload, size_t lenght) {
           conf["device"] = "lamp";
           conf["action"] = "read-all";
 
+          conf["name"] = lampName;
           conf["SSID"] = readFromEeprom(VARIABLE_SSID);
           conf["PASSWORD"] = readFromEeprom(VARIABLE_PASSWORD);
           conf["STATIC_IP"] = readFromEeprom(VARIABLE_STATIC_IP);
@@ -846,7 +867,8 @@ void setup()
   if (logging) {
     Serial.begin(115200); Serial.println();
   }
-
+//initEpromVariables(true);
+  
   /* INIT VARIABLES for VERY FIRST EXCECUTION */
   initEpromVariables(false);
   /* INIT VARIABLES for VERY FIRST EXCECUTION */

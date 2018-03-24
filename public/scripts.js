@@ -57,14 +57,14 @@ var setFormFields = function(){
     document.getElementById("color_r").value = settings.COLOR_R;
     document.getElementById("color_g").value = settings.COLOR_G;
     document.getElementById("color_b").value = settings.COLOR_B;
-    if(mainColor){
+    if(typeof mainColor != "undefined" && mainColor && typeof mainColor.color != "undefined"){
         mainColor.color.rgb = { r: settings.COLOR_R, g: settings.COLOR_G, b: settings.COLOR_B };
     }
 
     document.getElementById("color_alt_r").value = settings.COLOR_ALT_R;
     document.getElementById("color_alt_g").value = settings.COLOR_ALT_G;
     document.getElementById("color_alt_b").value = settings.COLOR_ALT_B;
-    if(secondaryColor){
+    if(typeof secondaryColor != "undefined" && secondaryColor && typeof secondaryColor.color != "undefined"){
         secondaryColor.color.rgb = { r: settings.COLOR_ALT_R, g: settings.COLOR_ALT_G, b: settings.COLOR_ALT_B };
     }
 
@@ -130,8 +130,15 @@ var setLampModeDependencies = function(){
     var mainColorContainer = document.getElementById("main-color-container");
     var secondaryColorContainer = document.getElementById("secondary-color-container");
     var intervalContainer = document.getElementById("interval-container");
+
+    if(settings.LAMP == 7){
+        mainColorContainer.style.display = "none";
+        secondaryColorContainer.style.display = "none";
+        stepsContainer.style.display = "none";
+        intervalContainer.style.display = "none";
+    }
     // rainbow mode
-    if(settings.LAMP == 1 || settings.LAMP == 7){
+    if(settings.LAMP == 1 || settings.LAMP == 8){
         mainColorContainer.style.display = "none";
     }
     else{

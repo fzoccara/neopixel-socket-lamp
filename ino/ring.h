@@ -1,6 +1,6 @@
 
 // Pattern types supported:
-enum  pattern { NONE, STATIC, RAINBOW_CYCLE, COLOR_ROTATION, THEATER_CHASE, COLOR_WIPE, SCANNER, FADE };
+enum  pattern { NONE, STATIC, RAINBOW_CYCLE, COLOR_ROTATION, THEATER_CHASE, COLOR_WIPE, SCANNER, INFINITELOOP, FADE };
 // Patern directions supported:
 enum  direction { FORWARD, REVERSE };
 
@@ -55,6 +55,9 @@ class NeoPatterns : public Adafruit_NeoPixel
                 case SCANNER:
                     ScannerUpdate();
                     break;
+                case INFINITELOOP:
+                    InfiniteLoopUpdate();
+                    break;
                 case FADE:
                     FadeUpdate();
                     break;
@@ -67,6 +70,16 @@ class NeoPatterns : public Adafruit_NeoPixel
     // Increment the Index and reset at the end
     void Increment()
     {
+       Index++;
+       if (Index >= TotalSteps)
+        {
+            Index = 0;
+            if (OnComplete != NULL)
+            {
+                OnComplete(); // call the comlpetion callback
+            }
+        }
+            /*
         if (Direction == FORWARD)
         {
            Index++;
@@ -90,13 +103,13 @@ class NeoPatterns : public Adafruit_NeoPixel
                     OnComplete(); // call the comlpetion callback
                 }
             }
-        }
+        }*/
     }
     
     // Reverse pattern direction
     void Reverse()
     {
-        if (Direction == FORWARD)
+        /*if (Direction == FORWARD)
         {
             Direction = REVERSE;
             Index = TotalSteps-1;
@@ -105,7 +118,7 @@ class NeoPatterns : public Adafruit_NeoPixel
         {
             Direction = FORWARD;
             Index = 0;
-        }
+        }*/
     }
     
     // Initialize for a Static
@@ -235,6 +248,34 @@ class NeoPatterns : public Adafruit_NeoPixel
                  setPixelColor(i, Color1);
             }
             else if (i == TotalSteps - Index) // Scan Pixel to the left
+            {
+                 setPixelColor(i, Color1);
+            }
+            else // Fading tail
+            {
+                 setPixelColor(i, DimColor(getPixelColor(i)));
+            }
+        }
+        show();
+        Increment();
+    }
+    
+    // Initialize for a SCANNNER
+    void InfiniteLoop(uint32_t color1, uint8_t interval)
+    {
+        ActivePattern = INFINITELOOP;
+        Interval = interval;
+        TotalSteps = numPixels();
+        Color1 = color1;
+        Index = 0;
+    }
+
+    // Update the Scanner Pattern
+    void InfiniteLoopUpdate()
+    { 
+        for (int i = 0; i < numPixels(); i++)
+        {
+            if (i == Index)  // Scan Pixel to the right
             {
                  setPixelColor(i, Color1);
             }

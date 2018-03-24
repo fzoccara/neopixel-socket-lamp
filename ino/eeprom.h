@@ -192,12 +192,12 @@ void initEpromVariables(bool forceInit)
       writeToEeprom(VARIABLE_PASSWORDAP,passwordAPDefault);
       writeToEeprom(VARIABLE_STATIC_IP,"");
       writeToEeprom(VARIABLE_LAMP,"1");
-      writeToEeprom(VARIABLE_COLOR_R,"255");
-      writeToEeprom(VARIABLE_COLOR_G,"255");
-      writeToEeprom(VARIABLE_COLOR_B,"0");
-      writeToEeprom(VARIABLE_COLOR_ALT_R,"0");
-      writeToEeprom(VARIABLE_COLOR_ALT_G,"0");
-      writeToEeprom(VARIABLE_COLOR_ALT_B,"50");
+      writeToEeprom(VARIABLE_COLOR_R,"0");
+      writeToEeprom(VARIABLE_COLOR_G,"8");
+      writeToEeprom(VARIABLE_COLOR_B,"255");
+      writeToEeprom(VARIABLE_COLOR_ALT_R,"252");
+      writeToEeprom(VARIABLE_COLOR_ALT_G,"168");
+      writeToEeprom(VARIABLE_COLOR_ALT_B,"0");
       writeToEeprom(VARIABLE_INTERVAL,"100");
       writeToEeprom(VARIABLE_STEPS,"50");
 
