@@ -100,7 +100,7 @@ var initialize = function(){
                             statusNotify.style.background = 'green';
                             statusNotify.innerHTML =  "Lamp online!" ;
                 
-                            readTextFile("/fakelamp/config.json", function(text){
+                            readTextFile("/fakelamp1/config.json", function(text){
                                 responseJson = JSON.parse(text);
                                 settings = responseJson;
                                 showSettings();

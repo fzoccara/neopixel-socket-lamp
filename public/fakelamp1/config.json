@@ -1,0 +1,13 @@
+{
+  "device": "lamp",
+  "name": "1led-fakelamp",
+  "LAMP":"1",
+  "COLOR_R":"252",
+  "COLOR_G":"168",
+  "COLOR_B":"70",
+  "COLOR_ALT_R":"100",
+  "COLOR_ALT_G":"50",
+  "COLOR_ALT_B":"255",
+  "INTERVAL":"100",
+  "STEPS":"50"
+}

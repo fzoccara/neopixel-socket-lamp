@@ -62,10 +62,6 @@ bool logging = true;
 unsigned long currentMillis = 0;
 long intervalFlashEeprom = 7000; // interval for reset eeprom (milliseconds)
 
-String ssidAPDefault = "fzoccara-lamp";
-String passwordAPDefault = "12345678";
-const char* mdnsName = "fzoccara";
-
 int pixelCount = 12;
 #define pixelPin D2
 
@@ -76,6 +72,10 @@ WebSocketsServer webSocketServer = WebSocketsServer(81);
 WebSocketsClient webSocketClient;
 
 String lampName = (String(pixelCount) + "led-" + String(ESP.getChipId())).c_str();
+
+String ssidAPDefault = "fzoccara-lamp-" + lampName;
+String passwordAPDefault = "12345678";
+const char* mdnsName = "fzoccara";
 
 #include "ring.h";
 #include "eeprom.h";

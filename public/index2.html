@@ -12,8 +12,11 @@
 
         <title>fzoccara - Module Configurations</title>
 
-		<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">-->
-		<link rel="stylesheet" href="style.css"  >
+			<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">-->
+			<link rel="stylesheet" href="/css/bootstrap.min.css" crossorigin="anonymous">
+			<link rel="stylesheet" href="/css/farbtastic.css" type="text/css" />
+
+			<link rel="stylesheet" href="style.css"  >
 		
 	</head>
 	<body>
@@ -24,7 +27,44 @@
 
         <div id="header">
         	<h1>fzoccara - Module Configurations</h1>
-        </div>
+				</div>
+				
+				<!--Badges
+				<h1>Example heading <span class="badge badge-secondary">New</span></h1>
+				<h2>Example heading <span class="badge badge-secondary">New</span></h2>
+				<h3>Example heading <span class="badge badge-secondary">New</span></h3>
+				<h4>Example heading <span class="badge badge-secondary">New</span></h4>
+				<h5>Example heading <span class="badge badge-secondary">New</span></h5>
+				<h6>Example heading <span class="badge badge-secondary">New</span></h6>
+
+				Buttons
+
+				<button type="button" class="btn btn-primary">Primary</button>
+				<button type="button" class="btn btn-secondary">Secondary</button>
+				<button type="button" class="btn btn-success">Success</button>
+				<button type="button" class="btn btn-danger">Danger</button>
+				<button type="button" class="btn btn-warning">Warning</button>
+				<button type="button" class="btn btn-info">Info</button>
+				<button type="button" class="btn btn-light">Light</button>
+				<button type="button" class="btn btn-dark">Dark</button>
+
+				<button type="button" class="btn btn-link">Link</button>
+
+				<div class="btn-group-vertical" role="group" aria-label="Button group with nested dropdown">
+					<button type="button" class="btn btn-secondary">1</button>
+					<button type="button" class="btn btn-secondary">2</button>
+				
+					<div class="btn-group" role="group">
+						<button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Dropdown
+						</button>
+						<div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+							<a class="dropdown-item" href="#">Dropdown link</a>
+							<a class="dropdown-item" href="#">Dropdown link</a>
+						</div>
+					</div>
+				</div>-->
+
 		<form id="form">
 
 			<fieldset>
@@ -46,14 +86,6 @@
 				  <input type="radio" name="lamp" id="lamp8" value="8" onclick="sendSingleCONF('LAMP',this.value);" >
 				  <label class="radio" for="lamp8" >COLOR ROTATION</label>
 				</div>
-				<!--<div class="radio">
-				  <input type="radio" name="lamp" id="lamp2" value="2" onclick="sendSingleCONF('LAMP',this.value);" >
-				  <label class="radio" for="lamp2" >DOUBLE FASE</label>
-				</div>-->
-				<!-- <div class="radio">
-				  <input type="radio" name="lamp" id="lamp3" value="3" onclick="sendSingleCONF('LAMP',this.value);" >
-				  <label class="radio" for="lamp3" >COLOR FULLFILL</label>
-				</div> -->
 				<div class="radio">
 				  <input type="radio" name="lamp" id="lamp4" value="4" onclick="sendSingleCONF('LAMP',this.value);" >
 				  <label class="radio" for="lamp4" >SCANNER</label>
@@ -62,10 +94,6 @@
 				  <input type="radio" name="lamp" id="lamp9" value="9" onclick="sendSingleCONF('LAMP',this.value);" >
 				  <label class="radio" for="lamp9" >INFINITE LOOP</label>
 				</div>
-				<!--<div class="radio">
-				  <input type="radio" name="lamp" id="lamp5" value="5" onclick="sendSingleCONF('LAMP',this.value);" >
-				  <label class="radio" for="lamp5" >FADE</label>
-				</div>-->
 				<div id="interval-container">
 					<label for="interval">Speed</label><br/>
 					<div class="range-container">
@@ -147,12 +175,30 @@
 				<input name="restart" type="button" id="restart" value="RESTART LAMP" class="secondary disabled" onclick="restartLamp();return false;" />
 			</fieldset>
 		</form>
-<!--		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>-->
 
 		<script type="text/javascript" src="iro.min.js"></script>
 		<script type="text/javascript" src="range.js"></script>
-		<script type="text/javascript" src="scripts.js"></script>
+		<script type="text/javascript" src="/js/scripts.js"></script>
+
+		
+		<script type="text/javascript" src="/js/jquery-3.3.1.min.js" ></script>
+		<script type="text/javascript" src="/js/bootstrap.min.js" ></script>
+		
+		
+
+				<!--
+		<script type="text/javascript" src="/js/farbtastic.js"></script>
+		<form><input type="text" id="color" name="color" value="#123456" /></form>
+				<div id="colorpicker"></div>
+		<script type="text/javascript">
+
+			$(document).ready(function() {
+		
+				$('#colorpicker').farbtastic('#color');
+		
+			});
+		
+		</script>-->
+		
 	</body>
 </html>
