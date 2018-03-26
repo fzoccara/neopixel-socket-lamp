@@ -188,6 +188,11 @@ var setLampModeDependencies = function(){
 
 }
 
+var addLamp = function(lampName){
+    var lamps = document.getElementById("lamps-container");
+    lamps.innerHTML = lamps.innerHTML + ' ' + lampName;
+};
+
 var initializeForm = function(){
     if(!initialized)
     {
@@ -364,7 +369,7 @@ var initialize = function(){
             statusNotify.innerHTML =  "Connection ready!" ;
 
             if(debug){console.log("Connection ready!" );}
-            var j={"device":"control","action":"connected","name":getControlName(),"from":"all"};
+            var j={"device":"control","action":"connected","name":getControlName(),"to":"all"};
             var configurations =  JSON.stringify(j);
             connection.send(configurations);
         };
@@ -375,34 +380,40 @@ var initialize = function(){
             if(typeof e.data != "undefined"){
                 var json = JSON.parse(e.data);
                 console.log(json);
-                if(typeof json.device != "undefined" && json.device == "lamp"){
-                    var message = '';
-                    var responseJson = {};
-                    if(typeof json.action != "undefined"){
-                        if(json.action == "connected"){
-                            if(debug){console.log('Server: ', e.data);}
-                            if(debug){console.log(json.name+ " lamp connected!" );}
+                if(typeof json.device != "undefined" ){
+                    if( json.device == "lamp"){
 
-                            if(debug){console.log('WebSocket open connection ');}
-                            var responseJson={"device":"control","action":"read-all","name":getControlName(),"from":json.name};
-                            message =  JSON.stringify(responseJson);
-                            connection.send(message);
+                        var message = '';
+                        var responseJson = {};
+                        if(typeof json.action != "undefined"){
+                            if(json.action == "connected"){
+                                if(debug){console.log('Server: ', e.data);}
+                                if(debug){console.log(json.name+ " lamp connected!" );}
 
-                            addLamp(json.name);
+                                if(debug){console.log('WebSocket open connection ');}
+                                var responseJson={"device":"control","action":"read-all","to":json.name,"from-name":getControlName()};
+                                message =  JSON.stringify(responseJson);
+                                connection.send(message);
+                                
+                                addLamp(json.name);
+                            }
+                            if(json.action == "read-all"){
+                                initVariables(json);
+                                if(debug){console.log("Get configurations!" );}
+                            }
+                            if(json.action == "disconnect"){
+                                unsetVariables(json);
+                                removeLamp(json.name);
+                                if(debug){console.log(json.name+" lamp disconnected!" );}
+                            }
                         }
-                        if(json.action == "read-all"){
-                            initVariables(json);
-                            if(debug){console.log("Get configurations!" );}
-                        }
-                        if(json.action == "disconnect"){
-                            unsetVariables(json);
-                            removeLamp(json.name);
-                            if(debug){console.log(json.name+" lamp disconnected!" );}
-                        }
+                        document.getElementById("submit").classList.remove("disabled");
+                        document.getElementById("reset").classList.remove("disabled");
+                        document.getElementById("restart").classList.remove("disabled");
                     }
-                    document.getElementById("submit").classList.remove("disabled");
-                    document.getElementById("reset").classList.remove("disabled");
-                    document.getElementById("restart").classList.remove("disabled");
+                    if(json.device == "server"){
+
+                    }
                 }
             }
         };

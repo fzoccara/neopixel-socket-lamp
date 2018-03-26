@@ -47,6 +47,16 @@ var logging = function(message) {
 
 var initialize = function(){
 
+    readTextFile("config.json", function(text){
+        settings = JSON.parse(text);
+        showSettings();
+        initializePost();
+    });
+
+};
+
+var initializePost = function(){
+
     statusNotify = document.getElementById("statusChecker");
 
     try{
@@ -71,8 +81,8 @@ var initialize = function(){
 
             logging("Connection ready!" );
 
-            var j={"device":"lamp","action":"connected"};
-            var message =  JSON.stringify(j);
+            var responseJson={"device":"lamp","action":"connected","name":settings['name']};
+            var message =  JSON.stringify(responseJson);
             connection.send(message);
         };
         connection.onmessage = function (e) {
@@ -90,7 +100,7 @@ var initialize = function(){
                 
                             logging("Control is connected!" );
             
-                            responseJson={"device":"lamp","action":"connected"};
+                            responseJson={"device":"lamp","action":"connected","name":settings['name']};
                             message =  JSON.stringify(responseJson);
                             connection.send(message);
                             logging('Control connected, sent lamp connected message');
@@ -100,16 +110,12 @@ var initialize = function(){
                             statusNotify.style.background = 'green';
                             statusNotify.innerHTML =  "Lamp online!" ;
                 
-                            readTextFile("/fakelamp1/config.json", function(text){
-                                responseJson = JSON.parse(text);
-                                settings = responseJson;
-                                showSettings();
-                                responseJson["action"]="read-all";
-                                message =  JSON.stringify(responseJson);
-                                connection.send(message);
-                                logging('Control request conf, sent lamp confs message');
-                                logging(responseJson);
-                            });
+                            responseJson["action"]="read-all";
+                            responseJson["name"]=settings['name'];
+                            message =  JSON.stringify(responseJson);
+                            connection.send(message);
+                            logging('Control request conf, sent lamp confs message');
+                            logging(responseJson);
                             break;
                         case "save-single":
                             if(typeof json.conf != "undefined" && typeof json.value != "undefined")

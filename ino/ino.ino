@@ -357,86 +357,90 @@ void webSocketEventServer(uint8_t num, WStype_t type, uint8_t * payload, size_t 
 
         String device = root["device"];
         String action = root["action"];
+        String to = root["to"];
+        
         if (logging) {
           Serial.print(action);
           Serial.print(" request from ");
           Serial.println(device);
         }
 
-        // send lamp configuration to client
-        if (action ==  "read-all") {
-          if (logging) {
-            Serial.println("read all");
+        if(to == "all" || to == lampName){
+          // send lamp configuration to client
+          if (action ==  "read-all" ) {
+            if (logging) {
+              Serial.println("read all");
+            }
+
+            JsonObject& conf = jsonBuffer.createObject();
+
+            conf["device"] = "lamp";
+            conf["action"] = "read-all";
+
+            conf["name"] = lampName;
+            conf["SSID"] = readFromEeprom(VARIABLE_SSID);
+            conf["PASSWORD"] = readFromEeprom(VARIABLE_PASSWORD);
+            conf["STATIC_IP"] = readFromEeprom(VARIABLE_STATIC_IP);
+            conf["SSIDAP"] = readFromEeprom(VARIABLE_SSIDAP);
+            conf["PASSWORDAP"] = readFromEeprom(VARIABLE_PASSWORDAP);
+            conf["SSL"] = readFromEeprom(VARIABLE_SSL);
+            conf["HOST"] = readFromEeprom(VARIABLE_HOST);
+            conf["PORT"] = readFromEeprom(VARIABLE_PORT);
+            conf["PATH"] = readFromEeprom(VARIABLE_PATH);
+            conf["FINGERPRINT"] = readFromEeprom(VARIABLE_FINGERPRINT);
+
+            char buffer[768];
+            conf.printTo(buffer, sizeof(buffer));
+            // send message to server when Connected
+            webSocketServer.sendTXT(num, buffer);
           }
 
-          JsonObject& conf = jsonBuffer.createObject();
+          // saving single configurations
+          if (action ==  "save-all") {
+            if (logging) {
+              Serial.println("save all");
+            }
 
-          conf["device"] = "lamp";
-          conf["action"] = "read-all";
+            String ssid = root["SSID"];
+            writeToEeprom(VARIABLE_SSID, ssid);
+            String password = root["PASSWORD"];
+            writeToEeprom(VARIABLE_PASSWORD, password);
+            String staticIp = root["STATIC_IP"];
+            writeToEeprom(VARIABLE_STATIC_IP, staticIp);
+            String ssidAP = root["SSIDAP"];
+            writeToEeprom(VARIABLE_SSIDAP, ssidAP);
+            String passwordAP = root["PASSWORDAP"];
+            writeToEeprom(VARIABLE_PASSWORDAP, passwordAP);
+            String ssl = root["SSL"];
+            writeToEeprom(VARIABLE_SSL, ssl);
+            String host = root["HOST"];
+            writeToEeprom(VARIABLE_HOST, host);
+            String port = root["PORT"];
+            writeToEeprom(VARIABLE_PORT, port);
+            String path = root["PATH"];
+            writeToEeprom(VARIABLE_PATH, path);
+            String fingerprint = root["FINGERPRINT"];
+            writeToEeprom(VARIABLE_FINGERPRINT, fingerprint);
 
-          conf["name"] = lampName;
-          conf["SSID"] = readFromEeprom(VARIABLE_SSID);
-          conf["PASSWORD"] = readFromEeprom(VARIABLE_PASSWORD);
-          conf["STATIC_IP"] = readFromEeprom(VARIABLE_STATIC_IP);
-          conf["SSIDAP"] = readFromEeprom(VARIABLE_SSIDAP);
-          conf["PASSWORDAP"] = readFromEeprom(VARIABLE_PASSWORDAP);
-          conf["SSL"] = readFromEeprom(VARIABLE_SSL);
-          conf["HOST"] = readFromEeprom(VARIABLE_HOST);
-          conf["PORT"] = readFromEeprom(VARIABLE_PORT);
-          conf["PATH"] = readFromEeprom(VARIABLE_PATH);
-          conf["FINGERPRINT"] = readFromEeprom(VARIABLE_FINGERPRINT);
-
-          char buffer[768];
-          conf.printTo(buffer, sizeof(buffer));
-          // send message to server when Connected
-          webSocketServer.sendTXT(num, buffer);
-        }
-
-        // saving single configurations
-        if (action ==  "save-all") {
-          if (logging) {
-            Serial.println("save all");
+            restartEsp();
           }
 
-          String ssid = root["SSID"];
-          writeToEeprom(VARIABLE_SSID, ssid);
-          String password = root["PASSWORD"];
-          writeToEeprom(VARIABLE_PASSWORD, password);
-          String staticIp = root["STATIC_IP"];
-          writeToEeprom(VARIABLE_STATIC_IP, staticIp);
-          String ssidAP = root["SSIDAP"];
-          writeToEeprom(VARIABLE_SSIDAP, ssidAP);
-          String passwordAP = root["PASSWORDAP"];
-          writeToEeprom(VARIABLE_PASSWORDAP, passwordAP);
-          String ssl = root["SSL"];
-          writeToEeprom(VARIABLE_SSL, ssl);
-          String host = root["HOST"];
-          writeToEeprom(VARIABLE_HOST, host);
-          String port = root["PORT"];
-          writeToEeprom(VARIABLE_PORT, port);
-          String path = root["PATH"];
-          writeToEeprom(VARIABLE_PATH, path);
-          String fingerprint = root["FINGERPRINT"];
-          writeToEeprom(VARIABLE_FINGERPRINT, fingerprint);
-
-          restartEsp();
-        }
-
-        // reset lamp to default configuration
-        if (action == "reset") {
-          if (logging) {
-            Serial.println("reset all");
+          // reset lamp to default configuration
+          if (action == "reset") {
+            if (logging) {
+              Serial.println("reset all");
+            }
+            initEpromVariables(true);
+            restartEsp();
           }
-          initEpromVariables(true);
-          restartEsp();
-        }
 
-        // restart lamp
-        if (action == "restart") {
-          if (logging) {
-            Serial.println("restart all");
+          // restart lamp
+          if (action == "restart") {
+            if (logging) {
+              Serial.println("restart all");
+            }
+            restartEsp();
           }
-          restartEsp();
         }
       }
       break;

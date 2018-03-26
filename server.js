@@ -15,33 +15,29 @@ const server = express()
 
 const wss = new SocketServer({ server });
 
-var devices = [];
-
 wss.on('connection', (ws) => {
   console.log('Client connected');
-  
+
   ws.on('message', function incoming(message) {
     var obj = JSON.parse( message );
-    if (!devices.indexOf(obj.name)){
-      devices.push(obj.name);
-      ws.name = obj.name;
-      ws.device = obj.device;
-    }
-    
+
+    ws.name = obj.name;
+    ws.device = obj.device;
+
     console.log(message);
     wss.clients.forEach((client) => {
-      if (typeof obj.for == "undefined"  && client.name == obj.for){
-        console.log('message for control');
+      if (typeof obj.for != "undefined"  && client.name == obj.for){
+        console.log('specific message for name '+client.name);
         client.send(message);
       }
       else{
         if (client.device == 'lamp' && obj.device == 'control'){
-          console.log('message for lamp');
+          console.log('message for lamp '+ client.name);
           client.send(message);
         }
         if (client.device == 'control' && obj.device == 'lamp'){
-            console.log('message for control');
-            client.send(message);
+          console.log('message for control '+ client.name);
+          client.send(message);
         }
       }
     });
@@ -49,24 +45,27 @@ wss.on('connection', (ws) => {
 
   ws.on('close', (ws) => {
     console.log('Client disconnected');
+    var lamps = wss.clients.filter((dev) => dev.device == "lamp");
+    var controls = wss.clients.filter((dev) => dev.device == "control");
+    controls.forEach((control) => {
+      var lampNames = [];
+      lamps.forEach((lamp) => {
+        lampNames.push(lamp.name);
+      })
 
-    
-    // wss.clients.forEach((client) => {
-    //   if(!devices.indexOf(client.name)){
-    //     devices[] = obj.name;
-    //   }
-    // });
+      var messageJson = {
+        "device":"control",
+        "action":"lamp-list",
+        "name":"server",
+        "to":control.name,
+        "lamps":lampNames
+      };
 
-    // wss.clients.forEach((client) => {
-    //   if (client.device == 'lamp' && obj.device == 'control'){
-    //       console.log('message for lamp');
-    //       client.send(message);
-    //   }
-    //   if (client.device == 'control' && obj.device == 'lamp'){
-    //       console.log('message for control');
-    //       client.send(message);
-    //   }
-    // });
+      var message = JSON.stringify(messageJson);
+      console.log(message);
+      console.log('message for control '+control.name+' from server');
+      control.send(message);
+    });
   });
 
 });
