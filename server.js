@@ -1,5 +1,13 @@
-
 'use strict';
+
+var debug = true;
+var devices = [];
+
+var logging = function(toLog){
+  if(debug){
+    console.log(toLog);
+  }
+}
 
 const express = require('express');
 const SocketServer = require('ws').Server;
@@ -11,61 +19,84 @@ const INDEX = path.join(__dirname, 'public/index.html');
 const server = express()
     .use(express.static( 'public'))
     .use((req, res) => res.sendFile(INDEX) )
-    .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+    .listen(PORT, () => logging(`Listening on ${ PORT }`));
 
 const wss = new SocketServer({ server });
 
 wss.on('connection', (ws) => {
-  console.log('Client connected');
+  logging('Client connected');
 
   ws.on('message', function incoming(message) {
     var obj = JSON.parse( message );
 
+    if (!devices.find(x => x.name == obj.name)){
+      devices.push({"name":obj.name,"device":obj.device});
+    }
     ws.name = obj.name;
     ws.device = obj.device;
 
-    console.log(message);
-    wss.clients.forEach((client) => {
-      if (typeof obj.for != "undefined"  && client.name == obj.for){
-        console.log('specific message for name '+client.name);
-        client.send(message);
+    logging(message);
+  
+    var foundDirect = false;
+    var directDevice = {};
+    if (typeof obj.to != "undefined" ){
+      if(wss.clients.find(x => x.name == obj.to)){
+        directDevice = wss.clients.find(x => x.name == obj.to);
+        foundDirect = true;
       }
-      else{
+    }
+    if(foundDirect){
+      directDevice.send(message);
+      logging('-----> to '+directDevice.device+' "'+directDevice.name + '" directly');
+    }
+    else{
+      wss.clients.forEach((client) => {
         if (client.device == 'lamp' && obj.device == 'control'){
-          console.log('message for lamp '+ client.name);
           client.send(message);
+          logging('-----> to lamps "'+ client.name+'"');
         }
         if (client.device == 'control' && obj.device == 'lamp'){
-          console.log('message for control '+ client.name);
           client.send(message);
+          logging('-----> to controls "'+ client.name+'"');
         }
-      }
-    });
+      });
+    }
   });
 
   ws.on('close', (ws) => {
-    console.log('Client disconnected');
-    var lamps = wss.clients.filter((dev) => dev.device == "lamp");
+    logging('Client disconnected');
+    
     var controls = wss.clients.filter((dev) => dev.device == "control");
-    controls.forEach((control) => {
-      var lampNames = [];
-      lamps.forEach((lamp) => {
-        lampNames.push(lamp.name);
-      })
+    var disconnectedDevice = {};
+    
+    try {
+      devices.forEach((device) => {
+        if (!wss.clients.find(client => client.name == device.name)){
+          disconnectedDevice = device;
+          throw {}; // just for exit the forEach
+        }
+      });
+    } catch (e) {
+    }
 
-      var messageJson = {
-        "device":"control",
-        "action":"lamp-list",
-        "name":"server",
-        "to":control.name,
-        "lamps":lampNames
-      };
+    if(Object.keys(disconnectedDevice).length){
+      controls.forEach((control) => {
+        var messageJson = {
+          "device":disconnectedDevice.device,
+          "action":"disconnected",
+          "name":disconnectedDevice.name,
+          "to":control.name
+        };
 
-      var message = JSON.stringify(messageJson);
-      console.log(message);
-      console.log('message for control '+control.name+' from server');
-      control.send(message);
-    });
+        var message = JSON.stringify(messageJson);
+        logging(message);
+        logging('-----> to control "'+control.name+'" from server');
+        control.send(message);
+      });
+    }
+    else{
+      logging("-----! Couldn't find the device details :(");
+    }
   });
 
 });

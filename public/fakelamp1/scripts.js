@@ -81,7 +81,7 @@ var initializePost = function(){
 
             logging("Connection ready!" );
 
-            var responseJson={"device":"lamp","action":"connected","name":settings['name']};
+            var responseJson={"device":"lamp","action":"connected","name":settings['name'],"to":"all"};
             var message =  JSON.stringify(responseJson);
             connection.send(message);
         };
@@ -95,7 +95,7 @@ var initializePost = function(){
                     switch(json.action)
                     {
                         case "connected":
-                            statusNotify.style.background = 'green';
+                            statusNotify.style.background = 'yellow';
                             statusNotify.innerHTML =  "Lamp online!" ;
                 
                             logging("Control is connected!" );
@@ -110,8 +110,7 @@ var initializePost = function(){
                             statusNotify.style.background = 'green';
                             statusNotify.innerHTML =  "Lamp online!" ;
                 
-                            responseJson["action"]="read-all";
-                            responseJson["name"]=settings['name'];
+                            responseJson={"device":"lamp","action":"read-all","name":settings['name']};
                             message =  JSON.stringify(responseJson);
                             connection.send(message);
                             logging('Control request conf, sent lamp confs message');

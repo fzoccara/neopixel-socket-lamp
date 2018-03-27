@@ -3,10 +3,20 @@
 var connection = null;
 var debug = true;
 var formNotify,statusNotify;
-var settings = {};
+var settings = [];
 var initialized = false;
 var mainColor = null;
 var secondaryColor = null;
+
+var logging = function(toLog){
+    if(debug){console.log(toLog);}
+}
+
+var unsetVariables = function(json){
+    if(typeof json.name != "undefined" && typeof settings[json.name] != "undefined"){
+        unset(settings[json.name]);
+    }
+}
 
 var initVariables = function(json){
     name = json.name;
@@ -190,7 +200,18 @@ var setLampModeDependencies = function(){
 
 var addLamp = function(lampName){
     var lamps = document.getElementById("lamps-container");
-    lamps.innerHTML = lamps.innerHTML + ' ' + lampName;
+    lamps.innerHTML = lamps.innerHTML + ' <span id="'+lampName+'" class="lampConnected">' + lampName + '</span>';
+};
+var removeLamp = function(lampName){
+    var lamps = document.getElementById("lamps-container");
+    var lamp = document.getElementById(lampName);
+    lamps.removeChild(lamp);
+    
+    if(document.getElementsByClassName('#lamps-container .lampConnected').length == 0){
+        document.getElementById("submit").classList.add("disabled");
+        document.getElementById("reset").classList.add("disabled");
+        document.getElementById("restart").classList.add("disabled");
+    }
 };
 
 var initializeForm = function(){
@@ -266,21 +287,21 @@ var sendSingleCONF = function( conf , value ){
 
     formNotify = document.getElementById("formChecker");
 
-    var j={"device":"control","action":"save-single","conf":conf,"value":value};
+    var j={"device":"control","action":"save-single","conf":conf,"value":value,"name":getControlName(),"to":"all"};
 
     var configurations =  JSON.stringify(j);
 
-    if(debug){console.log( 'conf: ' + configurations ); }
+    logging( 'conf: ' + configurations );
 
     try{
         connection.send(configurations );
         formNotify.style.background = 'green';
         formNotify.innerHTML =  "Single configuration sent!" ;
-        if(debug){console.log("Single configuration sent!" );}
+        logging("Single configuration sent!" );
     }catch(err){
         formNotify.style.background = 'orange';
         formNotify.innerHTML =  "Single configuration not sent!" ;
-        if(debug){console.log(err);}
+        logging(err);
     }
     return;
 
@@ -298,21 +319,20 @@ var sendAllCONF = function( ){
     setVariables();
     formNotify = document.getElementById("formChecker");
 
+    var j = extend({"device":"control","action":"save-all","name":getControlName(),"to":"all"}, settings);
 
-    var j = extend({"device":"control","action":"save-all"}, settings);
-
-    var configurations =  JSON.stringify(j);//'<#' + implode(arr, separatorChar);
-    if(debug){console.log( 'conf: ' + configurations ); }
+    var configurations =  JSON.stringify(j);
+    logging( 'conf: ' + configurations ); 
 
     try{
         connection.send(configurations );
         formNotify.style.background = 'green';
         formNotify.innerHTML =  "All configuration sent!" ;
-        if(debug){console.log("All configuration sent!" );}
+        logging("All configuration sent!" );
     }catch(err){
         formNotify.style.background = 'orange';
         formNotify.innerHTML =  "All configuration not sent!" ;
-        if(debug){console.log(err);}
+        logging(err);
     }
     return;
 }
@@ -323,7 +343,7 @@ var implode = function( array, separator ){
 
 var resetLamp = function(){
 
-    var j={"device":"control","action":"reset"};
+    var j={"device":"control","action":"reset","name":getControlName(),"to":"all"};
 
     var configurations =  JSON.stringify(j);
 
@@ -334,7 +354,7 @@ var resetLamp = function(){
 
 var restartLamp = function(){
 
-    var j={"device":"control","action":"restart"};
+    var j={"device":"control","action":"restart","name":getControlName(),"to":"all"};
 
     var configurations =  JSON.stringify(j);
 
@@ -345,7 +365,7 @@ var restartLamp = function(){
 
 var getControlName = function(){
     /*$.getJSON('//freegeoip.net/json/?callback=?', function(data) {
-        console.log(JSON.stringify(data, null, 2));
+        logging(JSON.stringify(data, null, 2));
     });*/
     return "web-control";
 }
@@ -368,66 +388,61 @@ var initialize = function(){
             statusNotify.style.background = 'orange';
             statusNotify.innerHTML =  "Connection ready!" ;
 
-            if(debug){console.log("Connection ready!" );}
+            logging("Connection ready!" );
             var j={"device":"control","action":"connected","name":getControlName(),"to":"all"};
             var configurations =  JSON.stringify(j);
             connection.send(configurations);
         };
         connection.onerror = function (error) {
-            if(debug){console.log('WebSocket Error ', error);}
+            logging('WebSocket Error ', error);
         };
         connection.onmessage = function (e) {
+
+            logging('WebSocket message received ');
             if(typeof e.data != "undefined"){
                 var json = JSON.parse(e.data);
-                console.log(json);
-                if(typeof json.device != "undefined" ){
-                    if( json.device == "lamp"){
+                logging(json);
+                var message = '';
+                var responseJson = {};
+                if(typeof json.device != "undefined" && typeof json.action != "undefined"){
+                    if(json.device == "lamp"){
+                        if(json.action == "connected"){
+                            logging(json.name+ " lamp connected!" );
 
-                        var message = '';
-                        var responseJson = {};
-                        if(typeof json.action != "undefined"){
-                            if(json.action == "connected"){
-                                if(debug){console.log('Server: ', e.data);}
-                                if(debug){console.log(json.name+ " lamp connected!" );}
+                            var responseJson={"device":"control","action":"read-all","name":getControlName(),"to":json.name};
+                            message =  JSON.stringify(responseJson);
+                            connection.send(message);
+                            
+                            addLamp(json.name);
 
-                                if(debug){console.log('WebSocket open connection ');}
-                                var responseJson={"device":"control","action":"read-all","to":json.name,"from-name":getControlName()};
-                                message =  JSON.stringify(responseJson);
-                                connection.send(message);
-                                
-                                addLamp(json.name);
-                            }
-                            if(json.action == "read-all"){
-                                initVariables(json);
-                                if(debug){console.log("Get configurations!" );}
-                            }
-                            if(json.action == "disconnect"){
-                                unsetVariables(json);
-                                removeLamp(json.name);
-                                if(debug){console.log(json.name+" lamp disconnected!" );}
-                            }
+                            document.getElementById("submit").classList.remove("disabled");
+                            document.getElementById("reset").classList.remove("disabled");
+                            document.getElementById("restart").classList.remove("disabled");
                         }
-                        document.getElementById("submit").classList.remove("disabled");
-                        document.getElementById("reset").classList.remove("disabled");
-                        document.getElementById("restart").classList.remove("disabled");
-                    }
-                    if(json.device == "server"){
-
+                        if(json.action == "read-all"){
+                            initVariables(json);
+                            logging("Get configurations!" );
+                        }
+                        if(json.action == "disconnected"){
+                            removeLamp(json.name);
+                            unsetVariables(json);
+                            logging(json.name+" lamp disconnected!" );
+                        }
                     }
                 }
             }
         };
         connection.onclose = function(e) {
-            if(debug){console.log('Server: ', e.data);}
+            logging('Server: ', e.data);
             statusNotify.style.background = 'red';
             statusNotify.innerHTML =  "WebSocket Disconnected!" ;
-            if(debug){console.log("WebSocket Disconnected!" );}
+            logging("WebSocket Disconnected!" );
         };
     }catch(err){
         statusNotify.style.background = 'red';
         statusNotify.innerHTML =  "WebSocket Disconnected!" ;
-        if(debug){console.log("WebSocket Disconnected!" );}
-        if(debug){console.log(err);}
+        logging("WebSocket Disconnected!" );
+        logging(err);
     }
 }
 
