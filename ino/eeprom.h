@@ -202,10 +202,11 @@ void initEpromVariables(bool forceInit)
       writeToEeprom(VARIABLE_STEPS,"50");
 
       writeToEeprom(VARIABLE_SSL,"1");
-      writeToEeprom(VARIABLE_HOST,"fzoccara.herokuapp.com");
+      writeToEeprom(VARIABLE_HOST,"nodejs-demo-fz.azurewebsites.net");
       writeToEeprom(VARIABLE_PORT,"443");
       writeToEeprom(VARIABLE_PATH,"/");
-      writeToEeprom(VARIABLE_FINGERPRINT,"08 3B 71 72 02 43 6E CA ED 42 86 93 BA 7E DF 81 C4 BC 62 30");
+      //writeToEeprom(VARIABLE_FINGERPRINT,"08 3B 71 72 02 43 6E CA ED 42 86 93 BA 7E DF 81 C4 BC 62 30");
+      writeToEeprom(VARIABLE_FINGERPRINT,"3A B0 B1 C2 7F 74 6F D9 0C 34 F0 D6 A9 60 CF 73 A4 22 9D E8");
 
       file.println("Lamp Initialized");
       
@@ -241,4 +242,3 @@ void formatEeprom()
   
 }
 /* CLEAR ALL FILES IN EEPROM */
-
