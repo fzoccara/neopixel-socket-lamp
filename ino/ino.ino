@@ -62,12 +62,12 @@ bool logging = true;
 unsigned long currentMillis = 0;
 long intervalFlashEeprom = 7000; // interval for reset eeprom (milliseconds)
 
-int pixelCount = 12;
+int pixelCount = 24;
 #define pixelPin D2
 
 //ESP8266WiFiMulti WiFiMulti;
 
-ESP8266WebServer server = ESP8266WebServer(80);
+ESP8266WebServer server (80);
 WebSocketsServer webSocketServer = WebSocketsServer(81);
 WebSocketsClient webSocketClient;
 
@@ -334,8 +334,8 @@ void webSocketEventServer(uint8_t num, WStype_t type, uint8_t * payload, size_t 
 
         root["device"] = "lamp";
         root["action"] = "connected";
-        conf["name"] = lampName;
-        conf["to"] = "all";
+        root["name"] = lampName;
+        root["to"] = "all";
 
         char buffer[255];
         root.printTo(buffer, sizeof(buffer));
@@ -480,8 +480,8 @@ void webSocketEventClient(WStype_t type, uint8_t * payload, size_t lenght) {
 
         root["device"] = "lamp";
         root["action"] = "connected";
-        conf["name"] = lampName;
-        conf["to"] = "all";
+        root["name"] = lampName;
+        root["to"] = "all";
 
         char buffer[768];
         root.printTo(buffer, sizeof(buffer));
@@ -975,4 +975,3 @@ void RingComplete()
 {
   Ring.Reverse();
 }
-
