@@ -67,6 +67,7 @@ int pixelCount = 24;
 
 //ESP8266WiFiMulti WiFiMulti;
 
+//ESP8266WebServer server = ESP8266WebServer(80);
 ESP8266WebServer server (80);
 WebSocketsServer webSocketServer = WebSocketsServer(81);
 WebSocketsClient webSocketClient;
@@ -975,3 +976,4 @@ void RingComplete()
 {
   Ring.Reverse();
 }
+
